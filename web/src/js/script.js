@@ -43,7 +43,7 @@ $(function () {
     };
 
     var protocolInputField = function (item) {
-        return '<div id="rfProtocols"></div>';
+        return '<div id="rfProtocols" class="pure-g"></div>';
     };
 
 
@@ -61,10 +61,10 @@ $(function () {
         var fillProtocolData = function (protos) {
             $("#rfProtocols").empty();
             protos.forEach(function (value) {
-                var elem = '<label class="pure-checkbox">' +
+                var elem = '<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3 pure-u-xl-1-4"><label class="pure-checkbox">' +
                     '<input class="config-item protocols-item" id="proto_check_' + value + '" type="checkbox" value="' + value + '" data-field="' + item_id + '" name="' + item_id + '">' +
                     ' Protocol ' + value +
-                    '</label>';
+                    '</label></div>';
                 $("#rfProtocols").append(elem);
                 registerConfigUi('#proto_check_' + value);
             });
