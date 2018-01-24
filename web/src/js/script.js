@@ -6,8 +6,8 @@ $(function () {
     };
 
     var logLevelInputFactory = function (item) {
-        return '<label for="' + item.name + '">' + item.name + '</label>' +
-            '<select class="config-item" data-field="' + item.name + '">' +
+        return '<label for="config-' + item.name + '">' + item.name + '</label>' +
+            '<select class="config-item" id="config-' + item.name + '" name="' + item.name + '">' +
             '<option value="">None</option>' +
             '<option value="error">Error</option>' +
             '<option value="warning">Warning</option>' +
@@ -19,20 +19,20 @@ $(function () {
 
 
     var inputFieldFactory = function (item) {
-        return '<label for="' + item.name + '">' + item.name + '</label>' +
-            '<input type="text" class="pure-input-1 config-item" id="' + item.name + '" name="' + item.name + '" data-field="' + item.name + '">' +
+        return '<label for="config-' + item.name + '">' + item.name + '</label>' +
+            '<input type="text" class="pure-input-1 config-item" id="config-' + item.name + '" name="' + item.name + '">' +
             '<span class="pure-form-message">' + item.help + '</span>';
     };
 
     var passwordFieldFactory = function (item) {
-        return '<label for="' + item.name + '">' + item.name + '</label>' +
-            '<input type="password" class="pure-input-1 config-item" id="' + item.name + '" name="' + item.name + '" data-field="' + item.name + '">' +
+        return '<label for="config-' + item.name + '">' + item.name + '</label>' +
+            '<input type="password" class="pure-input-1 config-item" id="config-' + item.name + '" name="' + item.name + '">' +
             '<span class="pure-form-message">' + item.help + '</span>';
     };
 
     var checkboxFactory = function (item) {
         return '<label class="pure-checkbox">' +
-            '<input class="config-item" type="checkbox" value="' + item.name + '" data-field="' + item.name + '" name="' + item.name + '"> ' +
+            '<input type="checkbox" class="config-item" id="config-' + item.name + '" name="' + item.name + '"> ' +
             item.name +
             '<span class="pure-form-message">' + item.help + '</span>' +
             '</label>';
@@ -43,34 +43,32 @@ $(function () {
     };
 
     var protocolInputField = function (item) {
-        return '<div id="rfProtocols" class="pure-g"></div>';
+        return '<div id="config-' + item.name + '" class="pure-g"></div>';
     };
 
 
     var inputApply = function (item_id, data) {
-        $('.config-item[data-field="' + item_id + '"]').val(data);
+        $('#config-' + item_id).val(data);
     };
 
     var checkboxApply = function (item_id, data) {
-        $('.config-item[data-field="' + item_id + '"]').prop("checked", data);
+        $('#config-' + item_id).prop("checked", data);
     };
 
-
     var protocolApply = function (item_id, data) {
-
         var fillProtocolData = function (protos) {
-            $("#rfProtocols").empty();
+            $("#config-rfProtocols").empty();
             protos.forEach(function (value) {
                 var elem = '<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3 pure-u-xl-1-4"><label class="pure-checkbox">' +
-                    '<input class="config-item protocols-item" id="proto_check_' + value + '" type="checkbox" value="' + value + '" data-field="' + item_id + '" name="' + item_id + '">' +
+                    '<input type="checkbox" class="config-item protocols-item" id="config-proto-' + value + '"name="' + item_id + '" value="' + value + '">' +
                     ' Protocol ' + value +
                     '</label></div>';
-                $("#rfProtocols").append(elem);
-                registerConfigUi('#proto_check_' + value);
+                $("#config-rfProtocols").append(elem);
+                registerConfigUi('#config-proto-' + value);
             });
             if (data.length > 0) {
                 data.forEach(function (value) {
-                    $('#proto_check_' + value).prop('checked', true);
+                    $('#config-proto-' + value).prop('checked', true);
                 });
             } else {
                 $(".protocols-item").each(function (_, value) {
@@ -88,11 +86,11 @@ $(function () {
     };
 
     var inputGet = function (item_id) {
-        return $('.config-item[data-field="' + item_id + '"]').val();
+        return $('#config-' + item_id).val();
     };
 
     var passwordGet = function (item_id) {
-        var pwd = $('.config-item[data-field="' + item_id + '"]').val();
+        var pwd = $('#config-' + item_id).val();
         if (pwd.length < 8) {
             alert("Password must have at least 8 characters");
             return undefined;
@@ -105,7 +103,7 @@ $(function () {
     };
 
     var checkboxGet = function (item_id) {
-        return $('.config-item[data-field="' + item_id + '"]').prop("checked");
+        return $('#config-' + item_id).prop("checked");
     };
 
     var protocolGet = function (item_id) {
@@ -246,13 +244,11 @@ $(function () {
     }
 
 
-    var registerConfigUi = function (item) {
-        var _item = $(item);
-        _item.change(function () {
-            var name = _item.data("field");
-            var new_data = ui_map[name].fetch(name);
-            if (new_data !== undefined && JSON.stringify(last_cfg[name]) !== JSON.stringify(new_data)) {
-                changes[name] = new_data;
+    var registerConfigUi = function (item_id) {
+        $('#config-' + item_id).change(function () {
+            var new_data = ui_map[item_id].fetch(item_id);
+            if (new_data !== undefined && JSON.stringify(last_cfg[item_id]) !== JSON.stringify(new_data)) {
+                changes[item_id] = new_data;
             }
         });
     };
@@ -324,7 +320,7 @@ $(function () {
         });
         $("#settings").prepend(settings);
         CONFIG_ITEMS.forEach(function (item) {
-            registerConfigUi('.config-item[data-field="' + item.name + '"]');
+            registerConfigUi(item.name);
         });
         loadConfig();
     };
@@ -398,7 +394,6 @@ $(function () {
 
     $('#settings-form').submit(function (e) {
         e.preventDefault();
-
         $.ajax({
                    url: "/config",
                    type: 'PUT',
