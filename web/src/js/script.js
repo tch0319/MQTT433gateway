@@ -66,15 +66,12 @@ $(function () {
                 $("#config-rfProtocols").append(elem);
                 registerConfigUi('#config-proto-' + value);
             });
-            if (data.length > 0) {
-                data.forEach(function (value) {
-                    $('#config-proto-' + value).prop('checked', true);
-                });
-            } else {
-                $(".protocols-item").each(function (_, value) {
-                    $(value).prop("checked", true);
-                });
+            if (data.length == 0) {
+                data = protos;
             }
+            data.forEach(function (value) {
+                $('#config-proto-' + value).prop('checked', true);
+            });
         };
 
         $.ajax({
