@@ -299,7 +299,7 @@ $(function () {
     );
 
 
-    function initUi() {
+    function initConfigUi() {
         var settings = "";
         CONFIG_ITEMS.forEach(function (item) {
             settings += item.factory(item);
@@ -403,7 +403,7 @@ $(function () {
         $('#log-container').find('pre').empty();
     });
 
-    initUi();
+    initConfigUi();
     initDebugUi(DEBUG_FLAGS, $("#debugflags"));
     loadFwVersion();
     openWebSocket();
