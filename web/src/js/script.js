@@ -210,6 +210,7 @@ $(function () {
 
         webSocket.onerror = function (ev) {
             webSocket.close();
+            clearTimeout(tm);
             setTimeout(function () {
                 openWebSocket();
             });
