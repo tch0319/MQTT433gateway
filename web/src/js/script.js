@@ -234,8 +234,12 @@ $(function () {
     function registerConfigUi(itemName) {
         $('#config-' + itemName).change(function () {
             var newData = uiMap[itemName].fetch(itemName);
-            if (newData !== undefined && JSON.stringify(lastCfg[itemName]) !== JSON.stringify(newData)) {
-                changes[itemName] = newData;
+            if (newData !== undefined) {
+                if (JSON.stringify(lastCfg[itemName]) !== JSON.stringify(newData)) {
+                    changes[itemName] = newData;
+                } else {
+                    delete changes[itemName];
+                }
             }
         });
     }
@@ -245,6 +249,7 @@ $(function () {
             uiMap[key].apply(key, value);
         });
         changes = {};
+        lastCfg = data;
     }
 
     function loadConfig() {
