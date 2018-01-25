@@ -170,8 +170,7 @@ $(function () {
         }
     });
 
-    var closeWebSocket = function () {
-    };
+    var closeWebSocket; // definition in openWebSocket()
 
     var openWebSocket = function () {
         var container = $('#log-container');
