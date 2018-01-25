@@ -193,8 +193,8 @@ $(function () {
             }, 5000);
         }
 
-        webSocket.onmessage = function (e) {
-            var message = e.data;
+        webSocket.onmessage = function (event) {
+            var message = event.data;
 
             if (message === "__PONG__") {
                 clearTimeout(tm);
@@ -208,7 +208,7 @@ $(function () {
             }
         };
 
-        webSocket.onerror = function (ev) {
+        webSocket.onerror = function (event) {
             webSocket.close();
             clearTimeout(tm);
             setTimeout(function () {
@@ -216,7 +216,7 @@ $(function () {
             });
         };
 
-        webSocket.onopen = function (ev) {
+        webSocket.onopen = function (event) {
             ping();
         };
     }
@@ -240,7 +240,7 @@ $(function () {
 
 
     function registerConfigUi(itemName) {
-        $('#config-' + itemName).change(function () {
+        $('#config-' + itemName).change(function (event) {
             var newData = uiMap[itemName].fetch(itemName);
             if (newData !== undefined && JSON.stringify(lastCfg[itemName]) !== JSON.stringify(newData)) {
                 changes[itemName] = newData;
@@ -328,7 +328,7 @@ $(function () {
                 id: 'debug-' + debugFlag,
                 name: debugFlag,
             });
-            checkbox.change(function (env) {
+            checkbox.change(function (event) {
                 submit(this);
             });
             return $('<div>', {
@@ -383,12 +383,12 @@ $(function () {
                });
     }
 
-    $('.system-btn').click(function () {
+    $('.system-btn').click(function (event) {
         sendCommand({command: $(this).data('command')});
     });
 
-    $('#settings-form').submit(function (e) {
-        e.preventDefault();
+    $('#settings-form').submit(function (event) {
+        event.preventDefault();
         $.ajax({
                    url: "/config",
                    type: 'PUT',
@@ -401,18 +401,18 @@ $(function () {
         return false;
     });
 
-    $('#cfg-form-reset').click(function (e) {
-        e.preventDefault();
+    $('#cfg-form-reset').click(function (event) {
+        event.preventDefault();
         loadConfig();
         return false;
     });
 
     // Clear log
-    $('#btn-clear-log').click(function (e) {
+    $('#btn-clear-log').click(function (event) {
         $('#log-container').find('pre').empty();
     });
 
-    $('#update-form').submit(function () {
+    $('#update-form').submit(function (event) {
         closeWebSocket();
     });
 
