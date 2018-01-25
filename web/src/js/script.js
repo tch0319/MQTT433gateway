@@ -5,7 +5,7 @@ $(function () {
         freeHeap: "Show the free heap memory every second"
     };
 
-    var logLevelInputFactory = function (item) {
+    function logLevelInputFactory(item) {
         return '<label for="config-' + item.name + '">' + item.name + '</label>' +
             '<select class="config-item" id="config-' + item.name + '" name="' + item.name + '">' +
             '<option value="">None</option>' +
@@ -15,48 +15,46 @@ $(function () {
             '<option value="debug">Debug</option>' +
             '</select>' +
             '<span class="pure-form-message">' + item.help + '</span>';
-    };
+    }
 
-
-    var inputFieldFactory = function (item) {
+    function inputFieldFactory(item) {
         return '<label for="config-' + item.name + '">' + item.name + '</label>' +
             '<input type="text" class="pure-input-1 config-item" id="config-' + item.name + '" name="' + item.name + '">' +
             '<span class="pure-form-message">' + item.help + '</span>';
-    };
+    }
 
-    var passwordFieldFactory = function (item) {
+    function passwordFieldFactory(item) {
         return '<label for="config-' + item.name + '">' + item.name + '</label>' +
             '<input type="password" class="pure-input-1 config-item" id="config-' + item.name + '" name="' + item.name + '">' +
             '<span class="pure-form-message">' + item.help + '</span>';
-    };
+    }
 
-    var checkboxFactory = function (item) {
+    function checkboxFactory(item) {
         return '<label class="pure-checkbox">' +
             '<input type="checkbox" class="config-item" id="config-' + item.name + '" name="' + item.name + '"> ' +
             item.name +
             '<span class="pure-form-message">' + item.help + '</span>' +
             '</label>';
-    };
+    }
 
-    var legendFactory = function (item) {
+    function legendFactory(item) {
         return '<legend>' + item.name + '</legend>';
-    };
+    }
 
-    var protocolInputField = function (item) {
+    function protocolInputField(item) {
         return '<div id="config-' + item.name + '" class="pure-g"></div>';
-    };
+    }
 
-
-    var inputApply = function (item_id, data) {
+    function inputApply(item_id, data) {
         $('#config-' + item_id).val(data);
-    };
+    }
 
-    var checkboxApply = function (item_id, data) {
+    function checkboxApply(item_id, data) {
         $('#config-' + item_id).prop("checked", data);
-    };
+    }
 
-    var protocolApply = function (item_id, data) {
-        var fillProtocolData = function (protos) {
+    function protocolApply(item_id, data) {
+        function fillProtocolData(protos) {
             $("#config-rfProtocols").empty();
             protos.forEach(function (value) {
                 var elem = '<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3 pure-u-xl-1-4"><label class="pure-checkbox">' +
@@ -72,7 +70,7 @@ $(function () {
             data.forEach(function (value) {
                 $('#config-proto-' + value).prop('checked', true);
             });
-        };
+        }
 
         $.ajax({
                    url: "/protocols",
@@ -80,30 +78,30 @@ $(function () {
                    contentType: 'application/json',
                    success: fillProtocolData
                });
-    };
+    }
 
-    var inputGet = function (item_id) {
+    function inputGet(item_id) {
         return $('#config-' + item_id).val();
-    };
+    }
 
-    var passwordGet = function (item_id) {
+    function passwordGet(item_id) {
         var pwd = $('#config-' + item_id).val();
         if (pwd.length < 8) {
             alert("Password must have at least 8 characters");
             return undefined;
         }
         return pwd;
-    };
+    }
 
-    var inputGetInt = function (item_id) {
+    function inputGetInt(item_id) {
         return parseInt(inputGet(item_id));
-    };
+    }
 
-    var checkboxGet = function (item_id) {
+    function checkboxGet(item_id) {
         return $('#config-' + item_id).prop("checked");
-    };
+    }
 
-    var protocolGet = function (item_id) {
+    function protocolGet(item_id) {
         var checked = $('.protocols-item:checked');
         if ($('.protocols-item').length === checked.length) {
             return [];
@@ -111,7 +109,7 @@ $(function () {
         return $.map(checked, function (x) {
             return $(x).val();
         });
-    };
+    }
 
     function ConfigItem(name, factory, apply, fetch, help) {
         this.name = name;
@@ -172,7 +170,7 @@ $(function () {
 
     var closeWebSocket; // definition in openWebSocket()
 
-    var openWebSocket = function () {
+    function openWebSocket() {
         var container = $('#log-container');
         var pre = container.find('pre');
 
@@ -184,7 +182,7 @@ $(function () {
             webSocket.close();
         };
 
-        var ping = function () {
+        function ping() {
             tm = setTimeout(function () {
                 webSocket.send("__PING__");
 
@@ -193,7 +191,7 @@ $(function () {
                     openWebSocket();
                 }, 2000);
             }, 5000);
-        };
+        }
 
         webSocket.onmessage = function (e) {
             var message = e.data;
@@ -220,7 +218,7 @@ $(function () {
         webSocket.onopen = function (ev) {
             ping();
         };
-    };
+    }
 
 
     var last_cfg = {};
@@ -240,22 +238,22 @@ $(function () {
     }
 
 
-    var registerConfigUi = function (item_id) {
+    function registerConfigUi(item_id) {
         $('#config-' + item_id).change(function () {
             var new_data = ui_map[item_id].fetch(item_id);
             if (new_data !== undefined && JSON.stringify(last_cfg[item_id]) !== JSON.stringify(new_data)) {
                 changes[item_id] = new_data;
             }
         });
-    };
+    }
 
-    var loadConfig = function () {
-        var applyConfig = function (data) {
+    function loadConfig() {
+        function applyConfig(data) {
             $.each(data, function (key, value) {
                 ui_map[key].apply(key, value);
             });
             changes = {};
-        };
+        }
 
         $.ajax({
                    url: '/config',
@@ -263,8 +261,7 @@ $(function () {
                    contentType: 'application/json',
                    success: applyConfig
                });
-    };
-
+    }
 
     var SystemCommandActions = {
         restart: function () {
@@ -309,7 +306,7 @@ $(function () {
     );
 
 
-    var initUi = function () {
+    function initUi() {
         var settings = "";
         CONFIG_ITEMS.forEach(function (item) {
             settings += item.factory(item);
@@ -319,7 +316,7 @@ $(function () {
             registerConfigUi(item.name);
         });
         loadConfig();
-    };
+    }
 
     function initDebugUi(debugFlags, container) {
         function create(debugFlag, helpText) {
@@ -373,7 +370,7 @@ $(function () {
         });
     }
 
-    var loadFwVersion = function () {
+    function loadFwVersion() {
         $.ajax({
                    url: "/firmware",
                    type: "GET",
@@ -382,7 +379,7 @@ $(function () {
                        $('#current-fw-version').append('Current version: ' + data.version);
                    }
                });
-    };
+    }
 
     $('.system-btn').click(function () {
         sendCommand({command: $(this).data('command')});
