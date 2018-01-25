@@ -45,20 +45,20 @@ $(function () {
         return '<div id="config-' + item.name + '" class="pure-g"></div>';
     }
 
-    function inputApply(item_id, data) {
-        $('#config-' + item_id).val(data);
+    function inputApply(itemName, data) {
+        $('#config-' + itemName).val(data);
     }
 
-    function checkboxApply(item_id, data) {
-        $('#config-' + item_id).prop("checked", data);
+    function checkboxApply(itemName, data) {
+        $('#config-' + itemName).prop("checked", data);
     }
 
-    function protocolApply(item_id, data) {
+    function protocolApply(itemName, data) {
         function fillProtocolData(protos) {
             $("#config-rfProtocols").empty();
             protos.forEach(function (value) {
                 var elem = '<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3 pure-u-xl-1-4"><label class="pure-checkbox">' +
-                    '<input type="checkbox" class="config-item protocols-item" id="config-proto-' + value + '"name="' + item_id + '" value="' + value + '">' +
+                    '<input type="checkbox" class="config-item protocols-item" id="config-proto-' + value + '"name="' + itemName + '" value="' + value + '">' +
                     ' Protocol ' + value +
                     '</label></div>';
                 $("#config-rfProtocols").append(elem);
@@ -80,12 +80,12 @@ $(function () {
                });
     }
 
-    function inputGet(item_id) {
-        return $('#config-' + item_id).val();
+    function inputGet(itemName) {
+        return $('#config-' + itemName).val();
     }
 
-    function passwordGet(item_id) {
-        var pwd = $('#config-' + item_id).val();
+    function passwordGet(itemName) {
+        var pwd = $('#config-' + itemName).val();
         if (pwd.length < 8) {
             alert("Password must have at least 8 characters");
             return undefined;
@@ -93,15 +93,15 @@ $(function () {
         return pwd;
     }
 
-    function inputGetInt(item_id) {
-        return parseInt(inputGet(item_id));
+    function inputGetInt(itemName) {
+        return parseInt(inputGet(itemName));
     }
 
-    function checkboxGet(item_id) {
-        return $('#config-' + item_id).prop("checked");
+    function checkboxGet(itemName) {
+        return $('#config-' + itemName).prop("checked");
     }
 
-    function protocolGet(item_id) {
+    function protocolGet(itemName) {
         var checked = $('.protocols-item:checked');
         if ($('.protocols-item').length === checked.length) {
             return [];
@@ -161,10 +161,10 @@ $(function () {
         new ConfigItem("ledActiveHigh", checkboxFactory, checkboxApply, checkboxGet, "The way how the LED is connected to the pin (false for built-in led)")
     ];
 
-    var ui_map = {};
+    var uiMap = {};
     CONFIG_ITEMS.forEach(function (value) {
         if (value.fetch !== undefined) {
-            ui_map[value.name] = value;
+            uiMap[value.name] = value;
         }
     });
 
@@ -221,7 +221,7 @@ $(function () {
     }
 
 
-    var last_cfg = {};
+    var lastCfg = {};
     var changes = {};
 
     function throttle(callback, limit) {
@@ -238,11 +238,11 @@ $(function () {
     }
 
 
-    function registerConfigUi(item_id) {
-        $('#config-' + item_id).change(function () {
-            var new_data = ui_map[item_id].fetch(item_id);
-            if (new_data !== undefined && JSON.stringify(last_cfg[item_id]) !== JSON.stringify(new_data)) {
-                changes[item_id] = new_data;
+    function registerConfigUi(itemName) {
+        $('#config-' + itemName).change(function () {
+            var newData = uiMap[itemName].fetch(itemName);
+            if (newData !== undefined && JSON.stringify(lastCfg[itemName]) !== JSON.stringify(newData)) {
+                changes[itemName] = newData;
             }
         });
     }
@@ -250,7 +250,7 @@ $(function () {
     function loadConfig() {
         function applyConfig(data) {
             $.each(data, function (key, value) {
-                ui_map[key].apply(key, value);
+                uiMap[key].apply(key, value);
             });
             changes = {};
         }
