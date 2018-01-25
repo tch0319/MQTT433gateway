@@ -253,6 +253,7 @@ $(function () {
                 uiMap[key].apply(key, value);
             });
             changes = {};
+            lastCfg = data;
         }
 
         $.ajax({
