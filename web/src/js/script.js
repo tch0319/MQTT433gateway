@@ -45,6 +45,21 @@ $(function () {
         return '<div id="config-' + item.name + '" class="pure-g"></div>';
     }
 
+    var protocols = [];
+    function protocolListFactory(protos) {
+        protocols = protos;
+        itemName = 'rfProtocols';
+        $("#config-rfProtocols").empty();
+        protos.forEach(function (value) {
+            var elem = '<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3 pure-u-xl-1-4"><label class="pure-checkbox">' +
+                '<input type="checkbox" class="config-item protocols-item" id="config-proto-' + value + '"name="' + itemName + '" value="' + value + '">' +
+                ' Protocol ' + value +
+                '</label></div>';
+            $("#config-rfProtocols").append(elem);
+            registerConfigUi('#config-proto-' + value);
+        });
+    }
+
     function inputApply(itemName, data) {
         $('#config-' + itemName).val(data);
     }
@@ -54,30 +69,15 @@ $(function () {
     }
 
     function protocolApply(itemName, data) {
-        function fillProtocolData(protos) {
-            $("#config-rfProtocols").empty();
-            protos.forEach(function (value) {
-                var elem = '<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3 pure-u-xl-1-4"><label class="pure-checkbox">' +
-                    '<input type="checkbox" class="config-item protocols-item" id="config-proto-' + value + '"name="' + itemName + '" value="' + value + '">' +
-                    ' Protocol ' + value +
-                    '</label></div>';
-                $("#config-rfProtocols").append(elem);
-                registerConfigUi('#config-proto-' + value);
-            });
-            if (data.length == 0) {
-                data = protos;
-            }
-            data.forEach(function (value) {
-                $('#config-proto-' + value).prop('checked', true);
-            });
+        while (protocols.length == 0) {
+            console.log("wait for protocols");
         }
-
-        $.ajax({
-                   url: "/protocols",
-                   type: "GET",
-                   contentType: 'application/json',
-                   success: fillProtocolData
-               });
+        if (data.length == 0) {
+            data = protocols;
+        }
+        data.forEach(function (value) {
+            $('#config-proto-' + value).prop('checked', true);
+        });
     }
 
     function inputGet(itemName) {
@@ -310,6 +310,12 @@ $(function () {
             settings += item.factory(item);
         });
         $("#settings").prepend(settings);
+        $.ajax({
+                   url: "/protocols",
+                   type: "GET",
+                   contentType: 'application/json',
+                   success: protocolListFactory
+               });
         CONFIG_ITEMS.forEach(function (item) {
             registerConfigUi(item.name);
         });
