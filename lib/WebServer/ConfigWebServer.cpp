@@ -211,6 +211,7 @@ void ConfigWebServer::onFirmwareFinish() {
 
 void ConfigWebServer::onFirmwareUpload() {
   HTTPUpload& upload = server.upload();
+  wsLogTarget.loop();
   if (upload.status == UPLOAD_FILE_START) {
     Logger.info.println(F("Webserver: firmware upload started"));
     Serial.setDebugOutput(true);
@@ -219,8 +220,8 @@ void ConfigWebServer::onFirmwareUpload() {
       otaHook();
     }
 
-    Serial.print(F("Update: "));
-    Serial.println(upload.filename.c_str());
+    Logger.debug.print(F("Update: "));
+    Logger.debug.println(upload.filename.c_str());
     uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
     if (!Update.begin(maxSketchSpace)) {  // start with max available size
       Update.printError(Serial);
@@ -231,8 +232,8 @@ void ConfigWebServer::onFirmwareUpload() {
     }
   } else if (upload.status == UPLOAD_FILE_END) {
     if (Update.end(true)) {  // true to set the size to the current progress
-      Serial.print(F("Update Success: "));
-      Serial.println(upload.totalSize);
+      Logger.debug.print(F("Update Success: "));
+      Logger.debug.println(upload.totalSize);
     } else {
       Update.printError(Serial);
     }
