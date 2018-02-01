@@ -180,6 +180,8 @@ $(function () {
                 webSocket.send("__PING__");
 
                 tm = setTimeout(function () {
+                    $('#log-status').empty();
+                    $('#log-status').append('Broken');
                     webSocket.close();
                     openWebSocket();
                 }, 2000);
@@ -202,6 +204,8 @@ $(function () {
         };
 
         webSocket.onerror = function (event) {
+            $('#log-status').empty();
+            $('#log-status').append('Error');
             webSocket.close();
             if (tm === undefined) {
                 openWebSocket();
@@ -209,6 +213,8 @@ $(function () {
         };
 
         webSocket.onopen = function (event) {
+            $('#log-status').empty();
+            $('#log-status').append('Connected');
             ping();
         };
     }
